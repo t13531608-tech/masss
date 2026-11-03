@@ -1,0 +1,308 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#f5f3ee">
+<title>مصروفي — دفتر المصروفات</title>
+<style>
+:root{
+  --paper:#f5f3ee;--surface:#fffefa;--ink:#202b28;--muted:#78817b;
+  --line:#e7e5dc;--green:#315f4d;--green-dark:#244a3b;--mint:#e8f0e9;
+  --orange:#d88b55;--orange-soft:#f8eee5;--red:#b65c51;
+  --shadow:0 12px 34px rgba(38,51,43,.055);--radius:18px;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--ink);font-family:Tahoma,Arial,sans-serif;line-height:1.6}
+button,input,select{font:inherit}
+button{cursor:pointer}
+button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid #a9c9b5;outline-offset:2px}
+.shell{max-width:1160px;margin:auto;padding:26px 24px 48px}
+header{display:flex;align-items:center;justify-content:space-between;gap:18px;margin-bottom:28px}
+.brand{display:flex;align-items:center;gap:12px}
+.brand-mark{width:44px;height:44px;border-radius:14px;background:var(--green);display:grid;place-items:center;color:white}
+.brand-mark svg{width:24px;height:24px}
+.brand h1{font-size:21px;line-height:1.2;margin:0;font-weight:800;letter-spacing:-.5px}
+.brand p{margin:4px 0 0;color:var(--muted);font-size:12px}
+.header-actions{display:flex;gap:9px;align-items:center}
+.btn{border:1px solid var(--line);border-radius:12px;padding:10px 15px;background:var(--surface);color:var(--ink);font-weight:700;font-size:13px;transition:.18s ease}
+.btn:hover{transform:translateY(-1px);border-color:#c9d5ca}
+.btn-primary{background:var(--green);border-color:var(--green);color:white}
+.btn-primary:hover{background:var(--green-dark)}
+.btn-quiet{background:transparent}
+.intro{display:flex;justify-content:space-between;align-items:end;margin:10px 0 20px;gap:16px}
+.eyebrow{font-size:11px;color:var(--green);font-weight:800;letter-spacing:.4px}
+.intro h2{font-size:clamp(23px,3vw,31px);margin:4px 0 2px;letter-spacing:-.8px}
+.intro p{margin:0;color:var(--muted);font-size:13px}
+.period{font-size:12px;color:var(--muted);background:#eeece5;padding:8px 12px;border-radius:10px;white-space:nowrap}
+.summary{display:grid;grid-template-columns:repeat(3,1fr);gap:13px;margin-bottom:20px}
+.metric{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:17px 19px;min-height:116px}
+.metric-top{display:flex;justify-content:space-between;align-items:center;color:var(--muted);font-size:12px}
+.metric-icon{width:30px;height:30px;border-radius:10px;background:var(--mint);display:grid;place-items:center;color:var(--green)}
+.metric-value{font-size:25px;font-weight:800;margin-top:12px;letter-spacing:-.7px;direction:ltr;text-align:right}
+.metric small{font-size:11px;color:var(--muted);font-weight:400}
+.layout{display:grid;grid-template-columns:minmax(0,1fr) 300px;gap:16px;align-items:start}
+.main-panel,.side-panel{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow)}
+.main-panel{padding:19px}
+.panel-heading{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:14px}
+.panel-heading h3{font-size:16px;margin:0}
+.panel-heading p{font-size:11px;color:var(--muted);margin:3px 0 0}
+.week-tabs{display:flex;gap:6px;background:#f2f0e9;padding:5px;border-radius:12px;margin-bottom:15px}
+.week-tab{flex:1;border:0;background:transparent;border-radius:9px;padding:8px 4px;font-size:12px;color:var(--muted);font-weight:700}
+.week-tab[aria-selected="true"]{background:white;color:var(--green);box-shadow:0 2px 7px #2633290d}
+.week-total{display:flex;justify-content:space-between;align-items:center;background:var(--mint);border-radius:13px;padding:13px 15px;margin-bottom:14px}
+.week-total span{font-size:12px;color:var(--green-dark)}
+.week-total strong{font-size:19px;color:var(--green-dark);direction:ltr}
+.days{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}
+.day{border:1px solid var(--line);border-radius:13px;padding:12px;min-width:0;transition:border-color .18s}
+.day:hover{border-color:#c5d5c8}
+.day-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:7px}
+.day-name{font-size:13px;font-weight:800}
+.day-count{font-size:10px;color:var(--muted)}
+.day-total{font-size:16px;font-weight:800;color:var(--green);direction:ltr;text-align:right;margin:2px 0 8px}
+.day-actions{display:flex;justify-content:space-between;align-items:center;gap:8px}
+.day-actions small{font-size:10px;color:var(--muted)}
+.add-link{border:0;background:var(--orange-soft);color:#9a6038;border-radius:8px;padding:6px 9px;font-size:11px;font-weight:700}
+.side-panel{padding:18px;position:sticky;top:16px}
+.side-panel h3{font-size:15px;margin:0 0 4px}
+.side-panel>p{font-size:11px;color:var(--muted);margin:0 0 15px}
+.field{margin-bottom:12px}
+.field label{display:block;font-size:11px;font-weight:700;margin-bottom:5px;color:#59635d}
+.field input,.field select{width:100%;border:1px solid var(--line);border-radius:10px;padding:10px 11px;background:#fffefa;color:var(--ink);font-size:13px}
+.field input::placeholder{color:#a8ada8}
+.field-row{display:grid;grid-template-columns:1fr 1fr;gap:9px}
+.side-panel .btn{width:100%;margin-top:3px}
+.note{font-size:10px;color:var(--muted);line-height:1.7;margin-top:13px}
+.entries{margin-top:17px;border-top:1px solid var(--line);padding-top:13px}
+.entries h4{font-size:12px;margin:0 0 9px}
+.entry{display:flex;justify-content:space-between;gap:8px;align-items:center;padding:8px 0;border-bottom:1px solid #f0eee8}
+.entry:last-child{border-bottom:0}
+.entry-title{font-size:11px;font-weight:700}
+.entry-meta{font-size:10px;color:var(--muted)}
+.entry-amount{font-size:12px;font-weight:800;white-space:nowrap;direction:ltr}
+.entry-delete{border:0;background:none;color:#a7aaa4;font-size:17px;padding:0 4px}
+.entry-delete:hover{color:var(--red)}
+.empty{font-size:11px;color:var(--muted);padding:12px 0;text-align:center}
+.footer{display:flex;justify-content:space-between;gap:12px;margin-top:16px;color:var(--muted);font-size:10px}
+.toast{position:fixed;bottom:20px;left:50%;transform:translate(-50%,20px);background:#263d32;color:white;padding:10px 16px;border-radius:11px;font-size:12px;opacity:0;pointer-events:none;transition:.2s;z-index:5}
+.toast.show{opacity:1;transform:translate(-50%,0)}
+dialog{border:1px solid var(--line);border-radius:18px;padding:0;width:min(420px,calc(100% - 28px));box-shadow:0 25px 80px #14251d33;color:var(--ink)}
+dialog::backdrop{background:#17231d66;backdrop-filter:blur(3px)}
+.modal{padding:20px}
+.modal-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px}
+.modal-head h3{font-size:16px;margin:0}
+.close{border:0;background:#f1f0ea;border-radius:8px;width:30px;height:30px;font-size:17px}
+@media(max-width:800px){.layout{grid-template-columns:1fr}.side-panel{position:static}.summary{gap:8px}.metric{padding:13px}.metric-value{font-size:20px}}
+@media(max-width:520px){.shell{padding:17px 13px 32px}header{align-items:flex-start}.brand h1{font-size:18px}.brand p{font-size:10px}.header-actions{flex-direction:column;align-items:stretch}.header-actions .btn{padding:8px 10px;font-size:11px}.intro{display:block}.period{display:inline-block;margin-top:10px}.summary{grid-template-columns:1fr 1fr}.metric:last-child{grid-column:1/-1;min-height:90px}.days{grid-template-columns:1fr}.main-panel{padding:13px}.week-tab{font-size:11px}.footer{flex-direction:column}}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{scroll-behavior:auto!important;transition:none!important}}
+</style>
+</head>
+<body>
+<div class="shell">
+<header>
+  <div class="brand">
+    <div class="brand-mark" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="4" y="3.5" width="16" height="17" rx="3"/><path d="M8 8h8M8 12h2m3 0h3m-8 4h2m3 0h3"/></svg></div>
+    <div><h1>مصروفي</h1><p>دفتر يومي لمتابعة مصروفاتك</p></div>
+  </div>
+  <div class="header-actions">
+    <button class="btn btn-quiet" id="clearBtn" type="button">مسح بيانات الفترة</button>
+    <button class="btn btn-primary" id="exportBtn" type="button">تصدير Excel ↓</button>
+  </div>
+</header>
+
+<section class="intro">
+  <div><div class="eyebrow">إدارة المصروفات ببساطة</div><h2>أين يذهب مصروفك؟</h2><p>سجّل ما تنفقه يومًا بيوم، وشاهد الصورة كاملة في نهاية الشهر.</p></div>
+  <div class="period" id="periodLabel">أربعة أسابيع · ٢٨ يومًا</div>
+</section>
+
+<section class="summary" aria-label="ملخص المصروفات">
+  <article class="metric"><div class="metric-top"><span>إجمالي المصروفات</span><span class="metric-icon">↗</span></div><div class="metric-value" id="grandTotal">٠٫٠٠ <small>ر.س</small></div></article>
+  <article class="metric"><div class="metric-top"><span>متوسط الصرف اليومي</span><span class="metric-icon">◷</span></div><div class="metric-value" id="dailyAverage">٠٫٠٠ <small>ر.س</small></div></article>
+  <article class="metric"><div class="metric-top"><span>الدخل المسجل</span><span class="metric-icon">＋</span></div><div class="metric-value" id="incomeTotal">٠٫٠٠ <small>ر.س</small></div></article>
+</section>
+
+<div class="layout">
+  <main class="main-panel">
+    <div class="panel-heading"><div><h3>متابعة الأسابيع</h3><p>اختر أسبوعًا لمراجعة أيامه ومصروفاته</p></div><span class="eyebrow">٠١ — ٠٤</span></div>
+    <div class="week-tabs" role="tablist" aria-label="اختيار الأسبوع">
+      <button class="week-tab" role="tab" aria-selected="true" data-week="0">الأسبوع ١</button>
+      <button class="week-tab" role="tab" aria-selected="false" data-week="1">الأسبوع ٢</button>
+      <button class="week-tab" role="tab" aria-selected="false" data-week="2">الأسبوع ٣</button>
+      <button class="week-tab" role="tab" aria-selected="false" data-week="3">الأسبوع ٤</button>
+    </div>
+    <div class="week-total"><span id="weekLabel">إجمالي الأسبوع الأول</span><strong id="weekTotal">٠٫٠٠ ر.س</strong></div>
+    <div class="days" id="daysGrid"></div>
+    <div class="footer"><span>تُحفظ إدخالاتك تلقائيًا على هذا الجهاز.</span><span>الأحد إلى السبت</span></div>
+  </main>
+
+  <aside class="side-panel">
+    <h3>إضافة عملية جديدة</h3>
+    <p>أدخل التفاصيل، وسنتولى الحساب.</p>
+    <form id="expenseForm">
+      <div class="field"><label for="daySelect">اليوم</label><select id="daySelect" required></select></div>
+      <div class="field-row">
+        <div class="field"><label for="amount">المبلغ (ر.س)</label><input id="amount" type="number" min="0.01" max="100000000" step="0.01" placeholder="0.00" required></div>
+        <div class="field"><label for="category">التصنيف</label><select id="category"><option>طعام ومشروبات</option><option>مواصلات</option><option>منزل وفواتير</option><option>تسوق</option><option>صحة</option><option>تعليم</option><option>ترفيه</option><option>أخرى</option></select></div>
+      </div>
+      <button class="btn btn-primary" type="submit">＋ إضافة المصروف</button>
+    </form>
+    <div class="field" style="margin-top:19px"><label for="income">الدخل (اختياري — ر.س)</label><input id="income" type="number" min="0" max="100000000" step="0.01" placeholder="أدخل دخلك إن وجد"></div>
+    <button class="btn" id="saveIncome" type="button">حفظ الدخل</button>
+    <p class="note">لا يلزم إدخال دخل لاستخدام الدفتر. يمكنك متابعة مصروفاتك فقط، وسيظل الملخص يعمل بشكل طبيعي.</p>
+    <div class="entries"><h4>عمليات الأسبوع المحدد</h4><div id="entryList"><div class="empty">لا توجد مصروفات مسجلة بعد.</div></div></div>
+  </aside>
+</div>
+</div>
+<dialog id="clearDialog"><div class="modal"><div class="modal-head"><h3>مسح بيانات الفترة؟</h3><button class="close" id="closeDialog" aria-label="إغلاق">×</button></div><p style="font-size:13px;color:var(--muted)">سيتم حذف المصروفات والدخل المسجلين في هذا الدفتر من هذا الجهاز. لا يمكن التراجع عن هذه الخطوة.</p><div style="display:flex;gap:8px;margin-top:18px"><button class="btn" id="cancelClear" style="flex:1">إلغاء</button><button class="btn btn-primary" id="confirmClear" style="flex:1;background:#a34f45;border-color:#a34f45">مسح البيانات</button></div></div></dialog>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+<script>
+(() => {
+  'use strict';
+  const DAYS = ['الأحد','الاثنين','الثلاثاء','الأربعاء','الخميس','الجمعة','السبت'];
+  const STORAGE_KEY = 'masroofi-ledger-v1';
+  const money = value => new Intl.NumberFormat('ar-SA',{minimumFractionDigits:2,maximumFractionDigits:2}).format(value) + ' ر.س';
+  const number = value => Number.isFinite(Number(value)) ? Number(value) : 0;
+  const emptyState = () => ({expenses:[],income:0});
+  let state = loadState();
+  let activeWeek = 0;
+
+  function loadState(){
+    try {
+      const parsed = JSON.parse(localStorage.getItem(STORAGE_KEY));
+      if (!parsed || !Array.isArray(parsed.expenses)) return emptyState();
+      return {
+        expenses: parsed.expenses.filter(item => item && typeof item.id === 'string' &&
+          Number.isInteger(item.day) && item.day >= 0 && item.day < 28 &&
+          Number.isFinite(item.amount) && item.amount > 0 &&
+          typeof item.description === 'string' && typeof item.category === 'string'),
+        income: Math.max(0, number(parsed.income))
+      };
+    } catch { return emptyState(); }
+  }
+  function persist(){
+    try { localStorage.setItem(STORAGE_KEY,JSON.stringify(state)); }
+    catch { notify('تعذر الحفظ على هذا الجهاز. تحقق من مساحة المتصفح.'); }
+  }
+  const weekExpenses = week => state.expenses.filter(item => Math.floor(item.day/7) === week);
+  const sum = items => items.reduce((total,item) => total + item.amount,0);
+  function weekName(index){return ['الأول','الثاني','الثالث','الرابع'][index];}
+  function notify(message){
+    const toast=document.getElementById('toast');toast.textContent=message;toast.classList.add('show');
+    clearTimeout(notify.timer);notify.timer=setTimeout(()=>toast.classList.remove('show'),2400);
+  }
+  function make(tag,className,text){
+    const el=document.createElement(tag);if(className)el.className=className;if(text!==undefined)el.textContent=text;return el;
+  }
+  function render(){
+    const total=sum(state.expenses);
+    document.getElementById('grandTotal').innerHTML = `${money(total).replace(' ر.س','')} <small>ر.س</small>`;
+    document.getElementById('dailyAverage').innerHTML = `${money(total/28).replace(' ر.س','')} <small>ر.س</small>`;
+    document.getElementById('incomeTotal').innerHTML = `${money(state.income).replace(' ر.س','')} <small>ر.س</small>`;
+    document.getElementById('income').value=state.income || '';
+    document.querySelectorAll('.week-tab').forEach(tab=>tab.setAttribute('aria-selected',String(Number(tab.dataset.week)===activeWeek)));
+    document.getElementById('weekLabel').textContent='إجمالي الأسبوع '+weekName(activeWeek);
+    document.getElementById('weekTotal').textContent=money(sum(weekExpenses(activeWeek)));
+    renderDays();renderEntries();
+  }
+  function renderDays(){
+    const grid=document.getElementById('daysGrid');grid.replaceChildren();
+    for(let day=activeWeek*7;day<activeWeek*7+7;day++){
+      const items=state.expenses.filter(item=>item.day===day);
+      const card=make('article','day');
+      const head=make('div','day-head');head.append(make('span','day-name',DAYS[day%7]),make('span','day-count',items.length+' عمليات'));
+      card.append(head,make('div','day-total',money(sum(items))));
+      const actions=make('div','day-actions');actions.append(make('small','',items.length?'تم تسجيل المصروفات':'لا توجد مصروفات'));
+      const add=make('button','add-link','＋ إضافة');add.type='button';add.addEventListener('click',()=>{document.getElementById('daySelect').value=String(day);document.getElementById('amount').focus();});
+      actions.append(add);card.append(actions);grid.append(card);
+    }
+    const select=document.getElementById('daySelect'),previous=select.value;
+    select.replaceChildren();
+    for(let day=0;day<28;day++){const option=make('option','',`الأسبوع ${Math.floor(day/7)+1} — ${DAYS[day%7]}`);option.value=String(day);select.append(option);}
+    select.value=previous!==''?previous:String(activeWeek*7);
+  }
+  function renderEntries(){
+    const list=document.getElementById('entryList');list.replaceChildren();
+    const items=weekExpenses(activeWeek).slice().sort((a,b)=>a.day-b.day);
+    if(!items.length){list.append(make('div','empty','لا توجد مصروفات مسجلة بعد.'));return;}
+    items.forEach(item=>{
+      const row=make('div','entry'),info=make('div');
+      info.append(make('div','entry-title',item.category),make('div','entry-meta',DAYS[item.day%7]+' · '+item.category));
+      const right=make('div');right.style.display='flex';right.style.alignItems='center';right.style.gap='7px';
+      right.append(make('span','entry-amount',money(item.amount)));
+      const del=make('button','entry-delete','×');del.type='button';del.setAttribute('aria-label','حذف مصروف '+item.category);
+      del.addEventListener('click',()=>{state.expenses=state.expenses.filter(expense=>expense.id!==item.id);persist();render();notify('تم حذف العملية.');});
+      right.append(del);row.append(info,right);list.append(row);
+    });
+  }
+  document.querySelectorAll('.week-tab').forEach(tab=>tab.addEventListener('click',()=>{activeWeek=Number(tab.dataset.week);render();}));
+  document.getElementById('expenseForm').addEventListener('submit',event=>{
+    event.preventDefault();
+    const description=document.getElementById('description').value.trim();
+    const amount=Number(document.getElementById('amount').value);
+    const day=Number(document.getElementById('daySelect').value);
+    if(!Number.isFinite(amount)||amount<=0||amount>100000000||!Number.isInteger(day)||day<0||day>27){notify('يرجى مراجعة المبلغ واليوم.');return;}
+    state.expenses.push({id:crypto.randomUUID?crypto.randomUUID():String(Date.now())+Math.random(),day,amount,category:document.getElementById('category').value});
+    activeWeek=Math.floor(day/7);persist();event.target.reset();render();notify('تمت إضافة المصروف بنجاح.');
+  });
+  document.getElementById('saveIncome').addEventListener('click',()=>{
+    const input=document.getElementById('income'),value=Number(input.value);
+    if(input.value!==''&&(!Number.isFinite(value)||value<0||value>100000000)){notify('أدخل مبلغ دخل صحيحًا.');return;}
+    state.income=input.value===''?0:value;persist();render();notify('تم حفظ الدخل.');
+  });
+  const dialog=document.getElementById('clearDialog');
+  document.getElementById('clearBtn').addEventListener('click',()=>dialog.showModal());
+  document.getElementById('closeDialog').addEventListener('click',()=>dialog.close());
+  document.getElementById('cancelClear').addEventListener('click',()=>dialog.close());
+  document.getElementById('confirmClear').addEventListener('click',()=>{state=emptyState();persist();render();dialog.close();notify('تم مسح بيانات الدفتر.');});
+
+  function xmlEscape(value){
+    return String(value??'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&apos;');
+  }
+  function exportExcel(){
+    const rows=[];
+    rows.push(['مصروفي — تقرير المصروفات']);
+    rows.push(['الفترة','أربعة أسابيع · ٢٨ يومًا']);
+    rows.push([]);
+    rows.push(['الأسبوع','اليوم','التصنيف','المبلغ (ريال سعودي)']);
+    for(let week=0;week<4;week++){
+      for(let day=week*7;day<week*7+7;day++){
+        const entries=state.expenses.filter(item=>item.day===day);
+        if(entries.length) entries.forEach(item=>rows.push(['الأسبوع '+(week+1),DAYS[day%7],item.category,item.amount]));
+        else rows.push(['الأسبوع '+(week+1),DAYS[day%7],'لا توجد مصروفات',0]);
+      }
+      rows.push(['إجمالي الأسبوع '+(week+1),'','','',sum(weekExpenses(week))]);
+      rows.push([]);
+    }
+    rows.push(['الإجمالي العام','','','',sum(state.expenses)]);
+    rows.push(['الدخل المسجل','','','',state.income]);
+    rows.push(['المتبقي من الدخل','','','',state.income-sum(state.expenses)]);
+    const colWidths=[19,16,23,20];
+    const styles=`<Styles>
+      <Style ss:ID="Default" ss:Name="Normal"><Alignment ss:Vertical="Center"/><Font ss:FontName="Arial" ss:Size="10" ss:Color="#26352E"/><Interior ss:Color="#FFFFFF" ss:Pattern="Solid"/></Style>
+      <Style ss:ID="Title"><Font ss:FontName="Arial" ss:Size="18" ss:Bold="1" ss:Color="#FFFFFF"/><Interior ss:Color="#315F4D" ss:Pattern="Solid"/><Alignment ss:Vertical="Center"/></Style>
+      <Style ss:ID="Header"><Font ss:Bold="1" ss:Color="#FFFFFF"/><Interior ss:Color="#527A65" ss:Pattern="Solid"/><Alignment ss:Horizontal="Center" ss:Vertical="Center"/></Style>
+      <Style ss:ID="Total"><Font ss:Bold="1" ss:Color="#244A3B"/><Interior ss:Color="#E8F0E9" ss:Pattern="Solid"/></Style>
+      <Style ss:ID="Money"><NumberFormat ss:Format="#,##0.00 &quot;ر.س&quot;"/></Style>
+    </Styles>`;
+    const tableRows=rows.map((row,index)=>{
+      const cells=row.map((value,col)=>{
+        const numeric=typeof value==='number';
+        const style=index===0?' ss:StyleID="Title"':index===3?' ss:StyleID="Header"':(String(row[0]||'').startsWith('إجمالي')||String(row[0]||'').includes('العام')||String(row[0]||'').includes('المتبقي'))?' ss:StyleID="Total"':numeric?' ss:StyleID="Money"':'';
+        const type=numeric?'Number':'String';
+        return `<Cell${style}><Data ss:Type="${type}">${numeric?value:xmlEscape(value)}</Data></Cell>`;
+      }).join('');
+      return `<Row>${cells}</Row>`;
+    }).join('');
+    const widths=colWidths.map(width=>`<Column ss:AutoFitWidth="0" ss:Width="${width*5.5}"/>`).join('');
+    const workbook=`<?xml version="1.0" encoding="UTF-8"?><?mso-application progid="Excel.Sheet"?><Workbook xmlns="urn:schemas-microsoft-com:office:spreadsheet" xmlns:ss="urn:schemas-microsoft-com:office:spreadsheet"><Worksheet ss:Name="تقرير المصروفات"><Table>${widths}${tableRows}</Table></Worksheet>${styles}</Workbook>`;
+    const blob=new Blob(['\ufeff',workbook],{type:'application/vnd.ms-excel;charset=utf-8'});
+    const url=URL.createObjectURL(blob),link=document.createElement('a');
+    link.href=url;link.download='مصروفي-تقرير-المصروفات.xls';document.body.append(link);link.click();link.remove();URL.revokeObjectURL(url);
+    notify('تم تجهيز تقرير Excel.');
+  }
+  document.getElementById('exportBtn').addEventListener('click',exportExcel);
+  render();
+})();
+</script>
+</body>
+</html>
